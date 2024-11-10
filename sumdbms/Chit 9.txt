@@ -1,0 +1,145 @@
+rutuja@rutuja-virtual-machine:~$ sudo mysql -u root -p
+
+
+mysql> create database library;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> use library;
+Database changed
+mysql> create table borrower(roll_no int primary key,name varchar(20),date_of_issue date,name_of_book varchar(20),status varchar(20));
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> desc borrower;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| roll_no       | int         | NO   | PRI | NULL    |       |
+| name          | varchar(20) | YES  |     | NULL    |       |
+| date_of_issue | date        | YES  |     | NULL    |       |
+| name_of_book  | varchar(20) | YES  |     | NULL    |       |
+| status        | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> create table fine(roll_no int,return_date date,amount int,foreign key(roll_no)references borrower(roll_no));
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> desc fine;
++-------------+------+------+-----+---------+-------+
+| Field       | Type | Null | Key | Default | Extra |
++-------------+------+------+-----+---------+-------+
+| roll_no     | int  | YES  | MUL | NULL    |       |
+| return_date | date | YES  |     | NULL    |       |
+| amount      | int  | YES  |     | NULL    |       |
++-------------+------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> insert into borrower values(1,'Rutuja','2024-03-13','DBMS','I');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into borrower values(2,'Sumeet','2024-05-20','TOC','I');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into borrower values(3,'Varad','2024-06-20','SPM','I');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into borrower values(4,'Shradha','2024-06-23','SPM','I');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into borrower values(5,'Rutu','2024-06-23','SPOS','I');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from borrower;
++---------+---------+---------------+--------------+--------------+
+| roll_no | name    | date_of_issue | name_of_book | status       |
++---------+---------+---------------+--------------+--------------+
+|       1 | Rutuja  | 2024-03-13    | DBMS         | I            |
+|       2 | Sumeet  | 2024-05-20    | TOC          | I            |
+|       3 | Varad   | 2024-06-20    | SPM          | I            |
+|       4 | Shradha | 2024-06-23    | SPM          | I            |
+|       5 | Rutu    | 2024-06-23    | SPOS         | I            |
++---------+---------+---------------+--------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> delimiter $
+mysql> create procedure calc_fine_lib(in roll int)
+    -> begin
+    -> declare fine1 int;
+    -> declare no_of_days int;
+    -> declare issue_date date;
+    -> declare exit handler for SQLEXCEPTION select'create table definition';
+    -> select date_of_issue into issue_date from borrower where roll_no=roll;
+    -> select datediff(curdate(),issue_date)into no_of_days;
+    -> if no_of_days>15 and no_of_days<30 then
+    -> set fine1=no_of_days*5;
+    -> insert into fine values(roll,curdate(),fine1);
+    -> elseif no_of_days>30 then
+    -> set fine1=((no_of_days-30)*50)+30*5;
+    -> insert into fine values(roll,curdate(),fine1);
+    -> else
+    -> insert into fine values(roll,curdate(),fine1);
+    -> end if;
+    -> update borrower set status='R'where roll_no=roll;
+    -> end $
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> call calc_fine_lib(1);
+    -> $;
+Query OK, 0 rows affected (0.01 sec)
+
+    -> $
+ERROR 1065 (42000): Query was empty
+mysql> call calc_fine_lib(2);
+    -> $;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> $;
+ERROR: 
+No query specified
+
+    -> $
+ERROR 1065 (42000): Query was empty
+mysql> call calc_fine_lib(3);
+    -> $;
+Query OK, 1 row affected (0.01 sec)
+
+    -> $
+ERROR 1065 (42000): Query was empty
+mysql> call calc_fine_lib(4);
+    -> $;
+Query OK, 1 row affected (0.00 sec)
+
+    -> $
+ERROR 1065 (42000): Query was empty
+mysql> call calc_fine_lib(5);
+    -> $;
+Query OK, 0 rows affected (0.01 sec)
+
+    -> $
+ERROR 1065 (42000): Query was empty
+mysql> select * from fine;
+    -> $
++---------+-------------+--------+
+| roll_no | return_date | amount |
++---------+-------------+--------+
+|       1 | 2024-11-10  |  10750 |
+|       2 | 2024-11-10  |   7350 |
+|       3 | 2024-11-10  |   5800 |
+|       4 | 2024-11-10  |   5650 |
+|       5 | 2024-11-10  |   5650 |
++---------+-------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from borrower;
+    -> $
++---------+---------+---------------+--------------+----------+
+| roll_no | name    | date_of_issue | name_of_book | status   |
++---------+---------+---------------+--------------+----------+
+|       1 | Rutuja  | 2024-03-13    | DBMS         | R        |
+|       2 | Sumeet  | 2024-05-20    | TOC          | R        |
+|       3 | Varad   | 2024-06-20    | SPM          | R        |
+|       4 | Shradha | 2024-06-23    | SPM          | R        |
+|       5 | Rutu    | 2024-06-23    | SPOS         | R        |
++---------+---------+---------------+--------------+----------+
+5 rows in set (0.00 sec)
+

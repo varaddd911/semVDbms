@@ -1,0 +1,65 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chit10             |
+| chit11             |
+| chit12             |
+| chit14             |
+| chit15             |
+| chit16             |
+| chit2              |
+| chit8              |
+| chit9              |
+| collegechit3       |
+| information_schema |
+| mysql              |
+| performance_schema |
+| student            |
+| sys                |
++--------------------+
+15 rows in set (0.00 sec)
+
+mysql> create database chit17;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use chit17;
+Database changed
+mysql> CREATE TABLE students ( student_id INT PRIMARY KEY,  first_name VARCHAR(50),last_name VARCHAR(50),branch VARCHAR(50),age INT);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO students (student_id, first_name, last_name, branch, age)
+VALUES (1, 'John', 'Doe', 'Computer Science', 20);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO students (student_id, first_name, last_name, branch, age)
+VALUES (2, 'Jane', 'Smith', 'Mathematics', 22);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO students (student_id, first_name, last_name, branch, age)
+VALUES (3, 'Alex', 'Johnson', 'Engineering', 21);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE get_student_name (IN p_student_id INT)
+    -> BEGIN
+    -> DECLARE v_student_name VARCHAR(100);
+    ->  SELECT CONCAT(first_name, ' ', last_name)
+    -> INTO v_student_name
+    -> FROM students
+    -> WHERE student_id = p_student_id;
+    -> SELECT v_student_name AS student_name;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CALL get_student_name(1);
+    -> //
++--------------+
+| student_name |
++--------------+
+| John Doe     |
++--------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)

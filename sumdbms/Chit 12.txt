@@ -1,0 +1,114 @@
+rutuja@rutuja-virtual-machine:~$ sudo mysql -u root -p
+
+mysql> create database a7;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use a7;
+Database changed
+mysql> create table library (accession int , title varchar(50),author varchar(30),publisher varchar(50));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table library_audit(accession int , title varchar(50),author varchar(30),publisher varchar(50),operation varchar(10));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> insert into library values(101,'OS','KORTH','MCG');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(102,'PROGRAMMING IN C','BALGURUSWAMY','BPB');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(103,'HOW TO LEARN C','KANETKAR','TECHMAX');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from library;
++-----------+------------------+--------------+-----------+
+| accession | title            | author       | publisher |
++-----------+------------------+--------------+-----------+
+|       101 | OS               | KORTH        | MCG       |
+|       102 | PROGRAMMING IN C | BALGURUSWAMY | BPB       |
+|       103 | HOW TO LEARN C   | KANETKAR     | TECHMAX   |
++-----------+------------------+--------------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> select * from library_audit;
+Empty set (0.00 sec)
+
+mysql> create trigger update_lib after update on library for each row
+    -> insert into library_audit(accession,title,author,publisher,operation)
+    -> values(old.accession,old.title,old.author,old.publisher,'UPDATE');
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> update library SET PUBLISHER='MC GRAW HILL'WHERE ACCESSION=101;
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from library;
++-----------+------------------+--------------+--------------+
+| accession | title            | author       | publisher    |
++-----------+------------------+--------------+--------------+
+|       101 | OS               | KORTH        | MC GRAW HILL |
+|       102 | PROGRAMMING IN C | BALGURUSWAMY | BPB          |
+|       103 | HOW TO LEARN C   | KANETKAR     | TECHMAX      |
++-----------+------------------+--------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from library_audit;
++-----------+-------+--------+-----------+-----------+
+| accession | title | author | publisher | operation |
++-----------+-------+--------+-----------+-----------+
+|       101 | OS    | KORTH  | MCG       | UPDATE    |
++-----------+-------+--------+-----------+-----------+
+1 row in set (0.00 sec)
+
+mysql> create trigger delete_lib after delete on library for each row insert into library_audit(accession,title,author,publisher,operation)values(old.accession,old.title,old.author,old.publisher,'DELETE');
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delete from library where accession=103;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select*from library;
++-----------+------------------+--------------+--------------+
+| accession | title            | author       | publisher    |
++-----------+------------------+--------------+--------------+
+|       101 | OS               | KORTH        | MC GRAW HILL |
+|       102 | PROGRAMMING IN C | BALGURUSWAMY | BPB          |
++-----------+------------------+--------------+--------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from library_audit;
++-----------+----------------+----------+-----------+-----------+
+| accession | title          | author   | publisher | operation |
++-----------+----------------+----------+-----------+-----------+
+|       101 | OS             | KORTH    | MCG       | UPDATE    |
+|       103 | HOW TO LEARN C | KANETKAR | TECHMAX   | DELETE    |
++-----------+----------------+----------+-----------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> create trigger insert_lib after insert on library for each row insert into library_audit(accession,title,author,publisher,operation)values(new.accession,new.title,new.author,new.publisher,'INSERT');
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into library values(104,'DATABASES','PATEL','TECKBOOKS');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select*from library;
++-----------+------------------+--------------+--------------+
+| accession | title            | author       | publisher    |
++-----------+------------------+--------------+--------------+
+|       101 | OS               | KORTH        | MC GRAW HILL |
+|       102 | PROGRAMMING IN C | BALGURUSWAMY | BPB          |
+|       104 | DATABASES        | PATEL        | TECKBOOKS    |
++-----------+------------------+--------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from library_audit;
++-----------+----------------+----------+-----------+-----------+
+| accession | title          | author   | publisher | operation |
++-----------+----------------+----------+-----------+-----------+
+|       101 | OS             | KORTH    | MCG       | UPDATE    |
+|       103 | HOW TO LEARN C | KANETKAR | TECHMAX   | DELETE    |
+|       104 | DATABASES      | PATEL    | TECKBOOKS | INSERT    |
++-----------+----------------+----------+-----------+-----------+
+3 rows in set (0.00 sec)
+
+
+

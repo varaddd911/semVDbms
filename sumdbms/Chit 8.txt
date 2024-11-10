@@ -1,0 +1,100 @@
+mysql> create database chit8;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chit2              |
+| chit8              |
+| collegechit3       |
+| information_schema |
+| mysql              |
+| performance_schema |
+| student            |
+| sys                |
++--------------------+
+8 rows in set (0.00 sec)
+
+mysql> use chit8;
+Database changed
+
+mysql> create table students(student_id int, name varchar(100),department varchar(50),year int, cgpa decimal(5.1));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table courses (course_id varchar(50), course_name varchar(100),de
+partment varchar(50),credits int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table enrollment (student_id int, course_id varchar(100),semester varchar(50),grade varchar(10));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into students values(101,"Sumeet","Computer",3,8.82);
+Query OK, 1 row affected, 1 warning (0.00 sec)
+
+mysql> insert into courses values ("CS101","DBMS","Computer",5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into enrollment values (101,"CS101","Fifth 2024","B");
+Query OK, 1 row affected (0.00 sec)
+
+
+mysql> select * from students where department="Computer";
++------------+--------+------------+------+------+
+| student_id | name   | department | year | cgpa |
++------------+--------+------------+------+------+
+|        101 | Sumeet | Computer   |    3 |    9 |
++------------+--------+------------+------+------+
+1 row in set (0.00 sec)
+
+mysql> select name,cgpa from students where cgpa>8 ;
++--------+------+
+| name   | cgpa |
++--------+------+
+| Sumeet |    9 |
++--------+------+
+1 row in set (0.01 sec)
+
+mysql> select course_name,credits from courses where credits>3;
++-------------+---------+
+| course_name | credits |
++-------------+---------+
+| DBMS        |       5 |
++-------------+---------+
+1 row in set (0.00 sec)
+
+mysql> update students set cgpa=10 where student_id=101;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from students;
++------------+--------+------------+------+------+
+| student_id | name   | department | year | cgpa |
++------------+--------+------------+------+------+
+|        101 | Sumeet | Computer   |    3 |   10 |
++------------+--------+------------+------+------+
+1 row in set (0.00 sec)
+
+mysql> update courses set department="Computer Engineering" where course_id="CS101";
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from courses;
++-----------+-------------+----------------------+---------+
+| course_id | course_name | department           | credits |
++-----------+-------------+----------------------+---------+
+| CS101     | DBMS        | Computer Engineering |       5 |
++-----------+-------------+----------------------+---------+
+1 row in set (0.00 sec)
+
+mysql> delete from students where student_id = 101;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from students;
+Empty set (0.00 sec)
+
+mysql> delete from courses where credits>2;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from courses;
+Empty set (0.00 sec)

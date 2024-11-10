@@ -1,0 +1,168 @@
+ja@rutuja-virtual-machine:~$ mongo
+
+> use TE3;
+switched to db TE3
+> db.createCollection("Student");
+{ "ok" : 1 }
+> db.Student.insert({"Name":"Rutuja","RollNo":59})
+WriteResult({ "nInserted" : 1 })
+> db.Student.find({"Name":"Rutuja"});
+{ "_id" : ObjectId("67308b192a6bffe12e009a26"), "Name" : "Rutuja", "RollNo" : 59 }
+> db.Student.remove({"RollNo":59});
+WriteResult({ "nRemoved" : 1 })
+> db.Student.insert({"Name":"RutujaN","RollNo":59})
+WriteResult({ "nInserted" : 1 })
+> db.Student.update({"RollNo":59},{$set:{"Name":"Rutuja"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find({RollNo":59})
+2024-11-10T16:03:37.729+0530 E QUERY    [thread1] SyntaxError: unterminated string literal @(shell):1:23
+> db.Student.find({"RollNo":59})
+{ "_id" : ObjectId("67308b912a6bffe12e009a27"), "Name" : "Rutuja", "RollNo" : 59 }
+> ^C
+bye
+
+rutuja@rutuja-virtual-machine:~$ mongo
+
+> use TE3;
+switched to db TE3
+> db.Student.insertOne({"Name":"Sumeet","RollNo":65})
+{
+	"acknowledged" : true,
+	"insertedId" : ObjectId("67308c90979fdd1dd700d758")
+}
+> db.Student.insertMany([{"Name":"Shradha","RollNo":55},{"Name":"Rutu","RollNo":56}])
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("67308d29979fdd1dd700d759"),
+		ObjectId("67308d29979fdd1dd700d75a")
+	]
+}
+> db.Student.find().pretty();
+{
+	"_id" : ObjectId("67308b912a6bffe12e009a27"),
+	"Name" : "Rutuja",
+	"RollNo" : 59
+}
+{
+	"_id" : ObjectId("67308c90979fdd1dd700d758"),
+	"Name" : "Sumeet",
+	"RollNo" : 65
+}
+{
+	"_id" : ObjectId("67308d29979fdd1dd700d759"),
+	"Name" : "Shradha",
+	"RollNo" : 55
+}
+{
+	"_id" : ObjectId("67308d29979fdd1dd700d75a"),
+	"Name" : "Rutu",
+	"RollNo" : 56
+}
+> db.Student.remove({"Name":"Rutu"})
+WriteResult({ "nRemoved" : 1 })
+> db.Student.insertOne({"Name":"Rutu","RollNo":54})
+{
+	"acknowledged" : true,
+	"insertedId" : ObjectId("67308d97979fdd1dd700d75b")
+}
+> db.Student.find().pretty();
+{
+	"_id" : ObjectId("67308b912a6bffe12e009a27"),
+	"Name" : "Rutuja",
+	"RollNo" : 59
+}
+{
+	"_id" : ObjectId("67308c90979fdd1dd700d758"),
+	"Name" : "Sumeet",
+	"RollNo" : 65
+}
+{
+	"_id" : ObjectId("67308d29979fdd1dd700d759"),
+	"Name" : "Shradha",
+	"RollNo" : 55
+}
+{
+	"_id" : ObjectId("67308d97979fdd1dd700d75b"),
+	"Name" : "Rutu",
+	"RollNo" : 54
+}
+> db.Student.find().sort({"Name":1})
+{ "_id" : ObjectId("67308d97979fdd1dd700d75b"), "Name" : "Rutu", "RollNo" : 54 }
+{ "_id" : ObjectId("67308b912a6bffe12e009a27"), "Name" : "Rutuja", "RollNo" : 59 }
+{ "_id" : ObjectId("67308d29979fdd1dd700d759"), "Name" : "Shradha", "RollNo" : 55 }
+{ "_id" : ObjectId("67308c90979fdd1dd700d758"), "Name" : "Sumeet", "RollNo" : 65 }
+> db.Student.find().sort({"RollNo":-1})
+{ "_id" : ObjectId("67308c90979fdd1dd700d758"), "Name" : "Sumeet", "RollNo" : 65 }
+{ "_id" : ObjectId("67308b912a6bffe12e009a27"), "Name" : "Rutuja", "RollNo" : 59 }
+{ "_id" : ObjectId("67308d29979fdd1dd700d759"), "Name" : "Shradha", "RollNo" : 55 }
+{ "_id" : ObjectId("67308d97979fdd1dd700d75b"), "Name" : "Rutu", "RollNo" : 54 }
+> db.Student.find().sort({"RollNo":1})
+{ "_id" : ObjectId("67308d97979fdd1dd700d75b"), "Name" : "Rutu", "RollNo" : 54 }
+{ "_id" : ObjectId("67308d29979fdd1dd700d759"), "Name" : "Shradha", "RollNo" : 55 }
+{ "_id" : ObjectId("67308b912a6bffe12e009a27"), "Name" : "Rutuja", "RollNo" : 59 }
+{ "_id" : ObjectId("67308c90979fdd1dd700d758"), "Name" : "Sumeet", "RollNo" : 65 }
+> ^C
+bye
+
+
+rutuja@rutuja-virtual-machine:~$ mongo
+
+> db.Student.insertMany([{"Name":"Shradha","RollNo":55,"Marks":80},{"Name":"Rutu","RollNo":56,"Marks":70}])
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("67308ece59f1902839fc2dc0"),
+		ObjectId("67308ece59f1902839fc2dc1")
+	]
+}
+> db.Student.insertMany([{"Name":"Sumeet","RollNo":65,"Marks":95},{"Name":"Rutuja","RollNo":59,"Marks":94}])
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("67308ef459f1902839fc2dc2"),
+		ObjectId("67308ef459f1902839fc2dc3")
+	]
+}
+> db.Student.find().pretty();
+{
+	"_id" : ObjectId("67308ece59f1902839fc2dc0"),
+	"Name" : "Shradha",
+	"RollNo" : 55,
+	"Marks" : 80
+}
+{
+	"_id" : ObjectId("67308ece59f1902839fc2dc1"),
+	"Name" : "Rutu",
+	"RollNo" : 56,
+	"Marks" : 70
+}
+{
+	"_id" : ObjectId("67308ef459f1902839fc2dc2"),
+	"Name" : "Sumeet",
+	"RollNo" : 65,
+	"Marks" : 95
+}
+{
+	"_id" : ObjectId("67308ef459f1902839fc2dc3"),
+	"Name" : "Rutuja",
+	"RollNo" : 59,
+	"Marks" : 94
+}
+> db.Student.find({Marks:{$gt:90}})
+{ "_id" : ObjectId("67308ef459f1902839fc2dc2"), "Name" : "Sumeet", "RollNo" : 65, "Marks" : 95 }
+{ "_id" : ObjectId("67308ef459f1902839fc2dc3"), "Name" : "Rutuja", "RollNo" : 59, "Marks" : 94 }
+
+> db.Student.find({Marks:{$lt:90}})
+{ "_id" : ObjectId("67308ece59f1902839fc2dc0"), "Name" : "Shradha", "RollNo" : 55, "Marks" : 80 }
+{ "_id" : ObjectId("67308ece59f1902839fc2dc1"), "Name" : "Rutu", "RollNo" : 56, "Marks" : 70 }
+
+> db.Student.find({Marks:{$ne:90}})
+{ "_id" : ObjectId("67308ece59f1902839fc2dc0"), "Name" : "Shradha", "RollNo" : 55, "Marks" : 80 }
+{ "_id" : ObjectId("67308ece59f1902839fc2dc1"), "Name" : "Rutu", "RollNo" : 56, "Marks" : 70 }
+{ "_id" : ObjectId("67308ef459f1902839fc2dc2"), "Name" : "Sumeet", "RollNo" : 65, "Marks" : 95 }
+{ "_id" : ObjectId("67308ef459f1902839fc2dc3"), "Name" : "Rutuja", "RollNo" : 59, "Marks" : 94 }
+
+> db.Student.find({Marks:{$eq:94}})
+{ "_id" : ObjectId("67308ef459f1902839fc2dc3"), "Name" : "Rutuja", "RollNo" : 59, "Marks" : 94 }
+

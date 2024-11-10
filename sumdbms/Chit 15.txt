@@ -1,0 +1,160 @@
+rutuja@rutuja-virtual-machine:~$ sudo mysql -u root -p
+
+mysql> create database a3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use a3;
+Database changed
+mysql>  create table information(SrNo int(3) primary key,name varchar(20),Branch varchar(20),Address varchar(20),Phno int(10) not null);
+Query OK, 0 rows affected, 2 warnings (0.04 sec)
+
+mysql> desc information;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| SrNo    | int         | NO   | PRI | NULL    |       |
+| name    | varchar(20) | YES  |     | NULL    |       |
+| Branch  | varchar(20) | YES  |     | NULL    |       |
+| Address | varchar(20) | YES  |     | NULL    |       |
+| Phno    | int         | NO   |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> insert into information values(1,"Rutu","CS","Pune",62681768);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into information values(2,"Sumeet","IT","Mumbai",62687658);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into information values(3,"Shradha","CS","Mumbai",61217658);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into information values(4,"varad","CS","vaiii",61000658);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into information values(5,"ayush","CS","pune",61000608);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from information;
++------+---------+--------+---------+----------+
+| SrNo | name    | Branch | Address | Phno     |
++------+---------+--------+---------+----------+
+|    1 | Rutu    | CS     | Pune    | 62681768 |
+|    2 | Sumeet  | IT     | Mumbai  | 62687658 |
+|    3 | Shradha | CS     | Mumbai  | 61217658 |
+|    4 | varad   | CS     | vaiii   | 61000658 |
+|    5 | ayush   | CS     | pune    | 61000608 |
++------+---------+--------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> update information set Branch = "IT" where SrNo=5;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from information;
++------+---------+--------+---------+----------+
+| SrNo | name    | Branch | Address | Phno     |
++------+---------+--------+---------+----------+
+|    1 | Rutu    | CS     | Pune    | 62681768 |
+|    2 | Sumeet  | IT     | Mumbai  | 62687658 |
+|    3 | Shradha | CS     | Mumbai  | 61217658 |
+|    4 | varad   | CS     | vaiii   | 61000658 |
+|    5 | ayush   | IT     | pune    | 61000608 |
++------+---------+--------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> alter table information
+    ->  add column Marks float(2);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>  update information set marks=90.3 where SrNo=1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>  update information set marks=93.0 where SrNo=2;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>  update information set marks=95.0 where SrNo=3;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>  update information set marks=80.0 where SrNo=4;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>  update information set marks=96.60 where SrNo=5;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from information;
++------+---------+--------+---------+----------+-------+
+| SrNo | name    | Branch | Address | Phno     | Marks |
++------+---------+--------+---------+----------+-------+
+|    1 | Rutu    | CS     | Pune    | 62681768 |  90.3 |
+|    2 | Sumeet  | IT     | Mumbai  | 62687658 |    93 |
+|    3 | Shradha | CS     | Mumbai  | 61217658 |    95 |
+|    4 | varad   | CS     | vaiii   | 61000658 |    80 |
+|    5 | ayush   | IT     | pune    | 61000608 |  96.6 |
++------+---------+--------+---------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> create index idx_name on information (name);
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> CREATE UNIQUE INDEX idx_phno
+    -> on information(Phno);
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> create view v1 as select * from information where marks>85;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create view v2 as select * from information where marks;
+Query OK, 0 rows affected (0.02 sec)
+
+
+mysql> delete from information where marks <85;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from information;
++------+---------+--------+---------+----------+-------+
+| SrNo | name    | Branch | Address | Phno     | Marks |
++------+---------+--------+---------+----------+-------+
+|    1 | Rutu    | CS     | Pune    | 62681768 |  90.3 |
+|    2 | Sumeet  | IT     | Mumbai  | 62687658 |    93 |
+|    3 | Shradha | CS     | Mumbai  | 61217658 |    95 |
+|    5 | ayush   | IT     | pune    | 61000608 |  96.6 |
++------+---------+--------+---------+----------+-------+
+4 rows in set (0.00 sec)
+
+//Sequence and Synonym///////
+
+CREATE TABLE sequence_example (seq_id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(50));
+
+INSERT INTO sequence_example (name) VALUES ('First Entry');
+INSERT INTO sequence_example (name) VALUES ('Second Entry');
+INSERT INTO sequence_example (name) VALUES ('Third Entry');
+
+SELECT * FROM sequence_example;
+
+CREATE VIEW information_view AS SELECT * FROM information;
+
+SELECT * FROM information_view;
+
+////////
+
+mysql> truncate table information;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from information;
+Empty set (0.01 sec)
+
+mysql> drop table information;
+Query OK, 0 rows affected (0.02 sec)
+
+
+

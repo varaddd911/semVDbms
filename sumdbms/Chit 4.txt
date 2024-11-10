@@ -1,0 +1,57 @@
+test> show dbs
+admin   40.00 KiB
+config  48.00 KiB
+local   40.00 KiB
+
+test> use Chit4
+switched to db Chit4
+
+Chit4> db.student.insertMany([{Fname:"Sumeet",Mname:"S.",Lname:"Darje",Branch:"Computer",Marks: 85, Year: 2023 },{Fname:"Varad",Mname:"D.",Lname:"Kulkarni",Branch:"Mathematics",Marks: 92, Years: 2022},{Fname:"Shradha",Mname:"D.",Lname:"Jadhav",Branch:"Physics",Marks: 69, Year: 2024 }])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6730913bb16189e5ac0d8190'),
+    '1': ObjectId('6730913bb16189e5ac0d8191'),
+    '2': ObjectId('6730913bb16189e5ac0d8192')
+  }
+}
+
+Chit4> db.student.insertOne({Fname:"Rutuja",Mname:"K.",Lname:"Nalawade", Branch:"Chemistry",Marks:88,Year: 2025 })
+{
+  acknowledged: true,
+  insertedId: ObjectId('67309353b16189e5ac0d8193')
+}
+
+Chit4> db.student.find()
+
+Chit4> db.student.find({Marks:{$gt:80}})
+
+Chit4> db.student.find({Fname:"Rutuja"})
+
+Chit4> db.student.updateOne({Fname:"Sumeet"},{$set: {Marks:95}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+Chit4> db.student.updateMany({Branch:"Physics"},{$set:{Year:2025}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+Chit4> db.student.deleteOne({Fname:"Shradha"})
+{ acknowledged: true, deletedCount: 1 }
+
+Chit4> db.student.deleteMany({Marks:{$lt:80}})
+{ acknowledged: true, deletedCount: 0 }
+
+Chit4> show collections
+student
+

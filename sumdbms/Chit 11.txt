@@ -1,0 +1,149 @@
+sudo mysql -u root -p
+mysql> create database db1;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| db                 |
+| db1                |
+| db2                |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+7 rows in set (0.00 sec)
+
+mysql> use db1;
+Database changed
+mysql> show tables;
+Empty set (0.00 sec)
+
+mysql> create table stud_marks(roll_no int primary key,name char(10),total_marks int);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> insert into stud_marks values(1,'rutuja',922);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into stud_marks values(2,'sumeet',932);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into stud_marks values(3,'shradha',934);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into stud_marks values(4,'varad',900);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into stud_marks values(5,'saloni',800);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into stud_marks values(6,'ayush',830);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from stud_marks;
++---------+---------+-------------+
+| roll_no | name    | total_marks |
++---------+---------+-------------+
+|       1 | rutuja  |         922 |
+|       2 | sumeet  |         932 |
+|       3 | shradha |         934 |
+|       4 | varad   |         900 |
+|       5 | saloni  |         800 |
+|       6 | ayush   |         830 |
++---------+---------+-------------+
+6 rows in set (0.00 sec)
+
+mysql> create table result (roll_no int , name char(30),class char(20),foreign key(roll_no)references stud_marks(roll_no));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> delimiter //
+mysql> create procedure proc_grade12(in marks int,out class char(10))
+    -> begin
+    -> if marks<=1500 and marks>=990 then set class='DIST';
+    -> end if;
+    -> if marks<=989 and marks>=900 then set class='FC';
+    -> end if;
+    -> if marks<=889 and marks>=825 then set class='HSC';
+    -> end if;
+    -> if marks<=824 and marks>=750 then set class='SC';
+    -> end if;
+    -> if marks<=749 and marks>=650 then set class='PC';
+    -> end if;
+    -> if marks<650 then set class='fail';
+    -> end if;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create function find_result(roll_in int)returns int deterministic
+    -> begin
+    -> declare fmarks int;
+    -> declare grade char(10);
+    -> declare stud_name char(10);
+    -> select stud_marks.total_marks,stud_marks.name into fmarks,stud_name from
+    -> stud_marks where stud_marks.roll_no=roll_in;
+    -> call proc_grade12(fmarks,@grade);
+    -> insert into result values(roll_in,stud_name,@grade);
+    -> return roll_in;
+    -> end;
+    -> //
+    
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> select find_result(3)//
++----------------+
+| find_result(3) |
++----------------+
+|              3 |
++----------------+
+1 row in set (0.04 sec)
+
+mysql> select find_result(1)//
++----------------+
+| find_result(1) |
++----------------+
+|              1 |
++----------------+
+1 row in set (0.01 sec)
+
+mysql> select find_result(2)//
++----------------+
+| find_result(2) |
++----------------+
+|              2 |
++----------------+
+1 row in set (0.01 sec)
+
+mysql> select find_result(4)//
++----------------+
+| find_result(4) |
++----------------+
+|              4 |
++----------------+
+1 row in set (0.01 sec)
+
+mysql> select find_result(5)//
++----------------+
+| find_result(5) |
++----------------+
+|              5 |
++----------------+
+1 row in set (0.01 sec)
+
+mysql> select * from result//
++---------+---------+-------+
+| roll_no | name    | class |
++---------+---------+-------+
+|       3 | shradha | FC    |
+|       1 | rutuja  | FC    |
+|       2 | sumeet  | FC    |
+|       4 | varad   | FC    |
+|       5 | saloni  | SC    |
++---------+---------+-------+
+5 rows in set (0.01 sec)
+
+
+
+

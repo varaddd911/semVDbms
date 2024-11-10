@@ -1,0 +1,104 @@
+rutuja@rutuja-virtual-machine:~$ mongo
+
+> use TE4;
+switched to db TE4
+> db.createCollection("Student1");
+{ "ok" : 1 }
+> db.Student1.insertOne({"Name":"Rutuja","RollNo":59,"City":"Pune","Marks":90});
+{
+	"acknowledged" : true,
+	"insertedId" : ObjectId("6730932249e630a3bf7318dd")
+}
+
+> db.Student1.insertMany([{"Name":"Shradha","RollNo":72,"City":"Pune","Marks":93},{"Name":"Rutu","RollNo":58,"City":"Mumbai","Marks":95}])
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("673093a549e630a3bf7318e2"),
+		ObjectId("673093a549e630a3bf7318e3")
+	]
+}
+> db.Student1.insertMany([{"Name":"Varad","RollNo":70,"City":"Pune","Marks":93},{"Name":"Summeett","RollNo":50,"City":"Mumbai","Marks":94}])
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("673093b049e630a3bf7318e4"),
+		ObjectId("673093b049e630a3bf7318e5")
+	]
+}
+> db.Student1.find();
+{ "_id" : ObjectId("6730932249e630a3bf7318dd"), "Name" : "Rutuja", "RollNo" : 59, "City" : "Pune", "Marks" : 90 }
+{ "_id" : ObjectId("673093a549e630a3bf7318e2"), "Name" : "Shradha", "RollNo" : 72, "City" : "Pune", "Marks" : 93 }
+{ "_id" : ObjectId("673093a549e630a3bf7318e3"), "Name" : "Rutu", "RollNo" : 58, "City" : "Mumbai", "Marks" : 95 }
+{ "_id" : ObjectId("673093b049e630a3bf7318e4"), "Name" : "Varad", "RollNo" : 70, "City" : "Pune", "Marks" : 93 }
+{ "_id" : ObjectId("673093b049e630a3bf7318e5"), "Name" : "Summeett", "RollNo" : 50, "City" : "Mumbai", "Marks" : 94 }
+> db.Student1.mapReduce(function () {emit(this.Name,this.Marks)},function(key,values){return Array.sum(values)},{query:{"RollNo":59},out:"final_result"})
+{
+	"result" : "final_result",
+	"timeMillis" : 156,
+	"counts" : {
+		"input" : 1,
+		"emit" : 1,
+		"reduce" : 0,
+		"output" : 1
+	},
+	"ok" : 1
+}
+> db.Student1.find();
+{ "_id" : ObjectId("6730932249e630a3bf7318dd"), "Name" : "Rutuja", "RollNo" : 59, "City" : "Pune", "Marks" : 90 }
+{ "_id" : ObjectId("673093a549e630a3bf7318e2"), "Name" : "Shradha", "RollNo" : 72, "City" : "Pune", "Marks" : 93 }
+{ "_id" : ObjectId("673093a549e630a3bf7318e3"), "Name" : "Rutu", "RollNo" : 58, "City" : "Mumbai", "Marks" : 95 }
+{ "_id" : ObjectId("673093b049e630a3bf7318e4"), "Name" : "Varad", "RollNo" : 70, "City" : "Pune", "Marks" : 93 }
+{ "_id" : ObjectId("673093b049e630a3bf7318e5"), "Name" : "Summeett", "RollNo" : 50, "City" : "Mumbai", "Marks" : 94 }
+ 
+> ^C
+bye
+
+
+rutuja@rutuja-virtual-machine:~$ mongo;
+
+> use TE4;
+switched to db TE4
+> db.Student1.find();
+{ "_id" : ObjectId("6730932249e630a3bf7318dd"), "Name" : "Rutuja", "RollNo" : 59, "City" : "Pune", "Marks" : 90 }
+{ "_id" : ObjectId("673093a549e630a3bf7318e2"), "Name" : "Shradha", "RollNo" : 72, "City" : "Pune", "Marks" : 93 }
+{ "_id" : ObjectId("673093a549e630a3bf7318e3"), "Name" : "Rutu", "RollNo" : 58, "City" : "Mumbai", "Marks" : 95 }
+{ "_id" : ObjectId("673093b049e630a3bf7318e4"), "Name" : "Varad", "RollNo" : 70, "City" : "Pune", "Marks" : 93 }
+{ "_id" : ObjectId("673093b049e630a3bf7318e5"), "Name" : "Summeett", "RollNo" : 50, "City" : "Mumbai", "Marks" : 94 }
+> var map=function() {emit(this.Name,this.Marks)};
+> var reduce=function(Name,Marks){return Array.sum(Marks);};
+> db.Student1.mapReduce(map,reduce,{out:"resultCollection"});
+{
+	"result" : "resultCollection",
+	"timeMillis" : 37,
+	"counts" : {
+		"input" : 5,
+		"emit" : 5,
+		"reduce" : 0,
+		"output" : 5
+	},
+	"ok" : 1
+}
+> var map=function() {emit(this.Name,this.Marks)};
+> var reduce=function(Name,Marks){return Array.avg(Marks);};
+> db.Student1.mapReduce(map,reduce,{out:"resultCollection2"});
+{
+	"result" : "resultCollection2",
+	"timeMillis" : 45,
+	"counts" : {
+		"input" : 5,
+		"emit" : 5,
+		"reduce" : 0,
+		"output" : 5
+	},
+	"ok" : 1
+}
+> db.resultCollection2.find()
+{ "_id" : "Rutu", "value" : 95 }
+{ "_id" : "Rutuja", "value" : 90 }
+{ "_id" : "Shradha", "value" : 93 }
+{ "_id" : "Summeett", "value" : 94 }
+{ "_id" : "Varad", "value" : 93 }
+> ^C
+bye
+

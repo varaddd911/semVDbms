@@ -1,0 +1,159 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chit10             |
+| chit12             |
+| chit14             |
+| chit2              |
+| chit8              |
+| chit9              |
+| collegechit3       |
+| information_schema |
+| mysql              |
+| performance_schema |
+| student            |
+| sys                |
++--------------------+
+12 rows in set (0.01 sec)
+
+mysql> use chit14;
+Database changed
+mysql> show tables;
+Empty set (0.02 sec)
+
+mysql> create table students ( student_id INT PRIMARY KEY, first_name VARCHAR(50),last_name VARCHAR(50), department VARCHAR(50));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> create table courses ( course_id VARCHAR(10) PRIMARY KEY, course_name VARCHAR(100),department VARCHAR(50));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table enrollment ( enrollment_id INT PRIMARY KEY, student_id INT, course_id VARCHAR(10),grade CHAR(1), foreign key (student_id) REFERENCES
+ students(student_id), foreign key (course_id) REFERENCES courses(course_id)
+);
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> insert into students (student_id, first_name, last_name, department)
+values (1,"Sumeet","Darje","Computer"),(2, "Rutuja","Nalawade","Computer"),(3,"Varad","Chaudhari","Computer");
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into courses (course_id, course_name, department) values ("CS101","Java","Computer"),("CS102","DBMS","Computer"),("CS103","CNS","Computer"
+);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into enrollment (enrollment_id, student_id, course_id, grade)
+values (1,1,"CS101","A"),(2,2,"CS102","A"),(3,3,"CS103","B");
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select students.first_name, students.last_name, courses.course_name f
+rom students inner join enrollment on students.student_id = enrollment.student_id inner join courses on enrollment.course_id = courses.course_id;
++------------+-----------+-------------+
+| first_name | last_name | course_name |
++------------+-----------+-------------+
+| Sumeet     | Darje     | Java        |
+| Rutuja     | Nalawade  | DBMS        |
+| Varad      | Chaudhari | CNS         |
++------------+-----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> select students.first_name, students.last_name, courses.course_name f
+rom students left join enrollment on students.student_id = enrollment.studen
+t_id left join courses on enrollment.course_id = courses.course_id;
++------------+-----------+-------------+
+| first_name | last_name | course_name |
++------------+-----------+-------------+
+| Sumeet     | Darje     | Java        |
+| Rutuja     | Nalawade  | DBMS        |
+| Varad      | Chaudhari | CNS         |
++------------+-----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> select students.first_name, students.last_name, courses.course_name f
+rom students right join enrollment on students.student_id = enrollment.stude
+nt_id right join courses on enrollment.course_id = courses.course_id;
++------------+-----------+-------------+
+| first_name | last_name | course_name |
++------------+-----------+-------------+
+| Sumeet     | Darje     | Java        |
+| Rutuja     | Nalawade  | DBMS        |
+| Varad      | Chaudhari | CNS         |
++------------+-----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> select students.first_name, students.last_name, courses.course_name from students left join enrollment on students.student_id = enrollment.student_id left join courses on enrollment.course_id = courses.course_id union SELECT students.first_name, students.last_name, courses.course_name FROM students RIGHT JOIN enrollment ON students.student_id = enrollment.student_id RIGHT JOIN courses ON enrollment.course_id = courses.course_id;
++------------+-----------+-------------+
+| first_name | last_name | course_name |
++------------+-----------+-------------+
+| Sumeet     | Darje     | Java        |
+| Rutuja     | Nalawade  | DBMS        |
+| Varad      | Chaudhari | CNS         |
++------------+-----------+-------------+
+3 rows in set (0.01 sec)
+
+mysql> select students.first_name, students.last_name, courses.course_name f
+rom students cross join courses;
++------------+-----------+-------------+
+| first_name | last_name | course_name |
++------------+-----------+-------------+
+| Varad      | Chaudhari | Java        |
+| Rutuja     | Nalawade  | Java        |
+| Sumeet     | Darje     | Java        |
+| Varad      | Chaudhari | DBMS        |
+| Rutuja     | Nalawade  | DBMS        |
+| Sumeet     | Darje     | DBMS        |
+| Varad      | Chaudhari | CNS         |
+| Rutuja     | Nalawade  | CNS         |
+| Sumeet     | Darje     | CNS         |
++------------+-----------+-------------+
+9 rows in set (0.00 sec)
+
+mysql> create view student_course_view as select students.student_id, students.first_name, students.last_name, courses.course_name, enrollment.grade fro
+m students inner join enrollment on students.student_id = enrollment.student_id inner join courses on enrollment.course_id = courses.course_id;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> select * from student_course_view;
++------------+------------+-----------+-------------+-------+
+| student_id | first_name | last_name | course_name | grade |
++------------+------------+-----------+-------------+-------+
+|          1 | Sumeet     | Darje     | Java        | A     |
+|          2 | Rutuja     | Nalawade  | DBMS        | A     |
+|          3 | Varad      | Chaudhari | CNS         | B     |
++------------+------------+-----------+-------------+-------+
+3 rows in set (0.01 sec)
+
+mysql> select * from student_course_view where grade="A";
++------------+------------+-----------+-------------+-------+
+| student_id | first_name | last_name | course_name | grade |
++------------+------------+-----------+-------------+-------+
+|          1 | Sumeet     | Darje     | Java        | A     |
+|          2 | Rutuja     | Nalawade  | DBMS        | A     |
++------------+------------+-----------+-------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> select a.first_name as Student1, b.first_name as Student2, a.departme
+nt from students a join students b on a.department = b.department and a.stud
+ent_id != b.student_id;
++----------+----------+------------+
+| Student1 | Student2 | department |
++----------+----------+------------+
+| Varad    | Sumeet   | Computer   |
+| Rutuja   | Sumeet   | Computer   |
+| Varad    | Rutuja   | Computer   |
+| Sumeet   | Rutuja   | Computer   |
+| Rutuja   | Varad    | Computer   |
+| Sumeet   | Varad    | Computer   |
++----------+----------+------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT courses.course_name, COUNT(enrollment.student_id) AS student_count FROM courses LEFT JOIN enrollment ON courses.course_id = enrollment.course_id GROUP BY courses.course_name;
++-------------+---------------+
+| course_name | student_count |
++-------------+---------------+
+| Java        |             1 |
+| DBMS        |             1 |
+| CNS         |             1 |
++-------------+---------------+
+3 rows in set (0.01 sec)

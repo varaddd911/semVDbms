@@ -1,0 +1,119 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chit10             |
+| chit11             |
+| chit12             |
+| chit14             |
+| chit16             |
+| chit2              |
+| chit8              |
+| chit9              |
+| collegechit3       |
+| information_schema |
+| mysql              |
+| performance_schema |
+| student            |
+| sys                |
++--------------------+
+14 rows in set (0.01 sec)
+
+mysql> use chit16;
+Database changed
+
+mysql> INSERT INTO students (student_id, first_name, last_name, age, department) values (1, "Sumeet", "Darje", 20, "Computer"),(2, "Rutuja", "Nalawade",
+ 22, "Computer"),(3, "Shradha", "Bhosale", 21, "IT"),(4, "Varad", "Jadhav",
+25, "Civil");
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO courses (course_id, course_name, credits) values ("CS101", "Data Structures", 3),("CS201", "DBMS", 4),("ENGR150", "Introduction to En
+gineering", 3);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO enrollment (enrollment_id, student_id, course_id, grade)
+values (1, 1, "CS101", "A"),(2, 2, "CS201", "B"),(3, 3, "ENGR150", "A"),(4, 1, 'CS201', 'C');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO students (student_id, first_name, last_name, age, department) VALUES (5, 'Omkar', 'Borude', 20, 'IT');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM students WHERE age > 20;
++------------+------------+-----------+------+------------+
+| student_id | first_name | last_name | age  | department |
++------------+------------+-----------+------+------------+
+|          2 | Rutuja     | Nalawade  |   22 | Computer   |
+|          3 | Shradha    | Bhosale   |   21 | IT         |
+|          4 | Varad      | Jadhav    |   25 | Civil      |
++------------+------------+-----------+------+------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT first_name, last_name, department from students WHERE department = 'Computer Science' AND age > 18;
+Empty set (0.00 sec)
+
+mysql> UPDATE students SET department = 'Computer Engineering' WHERE first_n
+ame = 'Rutuja' AND last_name ="Nalawade";
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> DELETE FROM students WHERE age < 19;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT department, COUNT(*) AS total_students from students GROUP BY department;
++----------------------+----------------+
+| department           | total_students |
++----------------------+----------------+
+| Computer             |              1 |
+| Computer Engineering |              1 |
+| IT                   |              2 |
+| Civil                |              1 |
++----------------------+----------------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT department, AVG(age) AS average_age from students GROUP BY department HAVING AVG(age) > 20;
++----------------------+-------------+
+| department           | average_age |
++----------------------+-------------+
+| Computer Engineering |     22.0000 |
+| IT                   |     20.5000 |
+| Civil                |     25.0000 |
++----------------------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT UPPER(CONCAT(first_name, ' ', last_name)) AS full_name FROM students;
++-----------------+
+| full_name       |
++-----------------+
+| SUMEET DARJE    |
+| RUTUJA NALAWADE |
+| SHRADHA BHOSALE |
+| VARAD JADHAV    |
+| OMKAR BORUDE    |
++-----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM students ORDER BY age DESC;
++------------+------------+-----------+------+----------------------+
+| student_id | first_name | last_name | age  | department           |
++------------+------------+-----------+------+----------------------+
+|          4 | Varad      | Jadhav    |   25 | Civil                |
+|          2 | Rutuja     | Nalawade  |   22 | Computer Engineering |
+|          3 | Shradha    | Bhosale   |   21 | IT                   |
+|          1 | Sumeet     | Darje     |   20 | Computer             |
+|          5 | Omkar      | Borude    |   20 | IT                   |
++------------+------------+-----------+------+----------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT department FROM students;
++----------------------+
+| department           |
++----------------------+
+| Computer             |
+| Computer Engineering |
+| IT                   |
+| Civil                |
++----------------------+
+4 rows in set (0.00 sec)

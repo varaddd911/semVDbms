@@ -1,0 +1,45 @@
+ use Chit5;
+
+Chit5> db.orders.insertMany([{Customer_ID:1, item:"Laptop",amt:1200,quantity:1,status:"Shipped" },{Customer_ID:2, item:"SmartPhone", amt:800, quantity:2,status:"Pending" },{Customer_ID:3, item:"HeadPhones",amt:150,quantity:3,status:"Delivered" },{Customer_ID:4, item:"Monitor", amt: 300, quantity: 2, status:"Shipped" } ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('67309ea6b16189e5ac0d8194'),
+    '1': ObjectId('67309ea6b16189e5ac0d8195'),
+    '2': ObjectId('67309ea6b16189e5ac0d8196'),
+    '3': ObjectId('67309ea6b16189e5ac0d8197')
+  }
+}
+
+Chit5> db.orders.createIndex({Customer_ID:1 })
+Customer_ID_1
+
+Chit5> db.orders.createIndex({item:1})
+item_1
+
+Chit5> db.orders.aggregate([{$sort:{amt:1}},{$limit:1}])
+[
+  {
+    _id: ObjectId('67309ea6b16189e5ac0d8196'),
+    Customer_ID: 3,
+    item: 'HeadPhones',
+    amt: 150,
+    quantity: 3,
+    status: 'Delivered'
+  }
+]
+
+Chit5> db.orders.aggregate([{$group:{_id:"$Customer_ID",totalAmount:{$sum:"$amt"}}}])
+[
+  { _id: 3, totalAmount: 150 },
+  { _id: 1, totalAmount: 1200 },
+  { _id: 4, totalAmount: 300 },
+  { _id: 2, totalAmount: 800 }
+]
+
+Chit5> db.orders.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { Customer_ID: 1 }, name: 'Customer_ID_1' },
+  { v: 2, key: { item: 1 }, name: 'item_1' }
+]

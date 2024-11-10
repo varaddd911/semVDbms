@@ -1,0 +1,94 @@
+//POM class//
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>MongoDBApp</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <!-- MongoDB Driver Dependency -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.10.1</version> <!-- Use the latest version -->
+        </dependency>
+    </dependencies>
+</project>
+
+//////////////////////
+
+//Java//
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+
+public class MongoDBConnection {
+    public static void main(String[] args) {
+        // Connection URI
+        String uri = "mongodb://localhost:27017"; // Adjust the URI for your MongoDB server
+
+        // Create a new MongoClient object
+        try (MongoClient mongoClient = new MongoClient(new MongoClientURI(uri))) {
+            // Connect to the database
+            MongoDatabase database = mongoClient.getDatabase("chit7"); // Replace with your database name
+	    
+	    System.out.println("connection established"); // prints connection established if database created 
+
+            // Access a collection
+            MongoCollection<Document> collection = database.getCollection("Student"); // Replace with your collection name
+
+            // Insert a sample document
+            Document document = new Document("name", "John Doe")
+                                    .append("age", 29)
+                                    .append("city", "New York");
+            collection.insertOne(document);
+
+            System.out.println("Document inserted successfully!");
+            
+            Document filter = new Document("age", 30);
+            for (Document doc : collection.find(filter)) {
+                System.out.println(doc.toJson());
+            }
+
+            // Fetch all documents in the collection
+            for (Document doc : collection.find()) {
+                System.out.println(doc.toJson());
+            }
+        }
+    }
+}
+
+//MongoDB//
+
+test> show dbs
+Chit4   72.00 KiB
+Chit5   80.00 KiB
+admin   40.00 KiB
+config  48.00 KiB
+local   40.00 KiB
+
+test> use chit7
+switched to db chit7
+
+chit7> db.createCollection("Student")
+{ ok: 1 }
+chit7> db.Student.insertOne({Name:"Sumeet",age:20,City:"Pune" })
+{
+  acknowledged: true,
+  insertedId: ObjectId('6730f535f1e55a76d20d8190')
+}
+chit7> db.Student.find()
+[
+  {
+    _id: ObjectId('6730f535f1e55a76d20d8190'),
+    Name: 'Sumeet',
+    age: 20,
+    City: 'Pune'
+  }
+]

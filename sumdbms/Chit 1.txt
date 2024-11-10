@@ -1,0 +1,129 @@
+//Java//
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+
+public class Chit1 {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/Samplechit1"; // Or Oracle URL
+        String username = "root";
+        String password = "root";
+
+        try {
+            // Load the JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver"); // Use "oracle.jdbc.driver.OracleDriver" for Oracle
+
+            // Establish the connection
+            Connection connection = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected to the database!");
+
+            // Update data example
+            Statement stmt = connection.createStatement();
+            String sqlUpdate = "UPDATE employees SET salary = 50000 WHERE employee_id = 101";
+            int rowsUpdated = stmt.executeUpdate(sqlUpdate);
+            System.out.println(rowsUpdated + " row(s) updated.");
+
+            // Select all data example
+            String sqlSelect = "SELECT * FROM employees";
+            ResultSet rs = stmt.executeQuery(sqlSelect);
+            while (rs.next()) {
+                int id = rs.getInt("employee_id");
+                String name = rs.getString("name");
+                double salary = rs.getDouble("salary");
+                System.out.println("ID: " + id + ", Name: " + name + ", Salary: " + salary);
+            }
+
+            // Close the connection
+            connection.close();
+            System.out.println("Connection closed.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+//MySQL//
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chit1              |
+| chit10             |
+| chit11             |
+| chit12             |
+| chit14             |
+| chit15             |
+| chit16             |
+| chit17             |
+| chit2              |
+| chit8              |
+| chit9              |
+| collegechit3       |
+| information_schema |
+| mysql              |
+| performance_schema |
+| student            |
+| sys                |
++--------------------+
+17 rows in set (0.02 sec)
+
+mysql> create database Samplechit1;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chit1              |
+| chit10             |
+| chit11             |
+| chit12             |
+| chit14             |
+| chit15             |
+| chit16             |
+| chit17             |
+| chit2              |
+| chit8              |
+| chit9              |
+| collegechit3       |
+| information_schema |
+| mysql              |
+| performance_schema |
+| samplechit1        |
+| student            |
+| sys                |
++--------------------+
+18 rows in set (0.00 sec)
+
+mysql> use Samplechit1;
+Database changed
+mysql> create table employees(employee_id int, name varchar(100), salary int);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> insert into employees(employee_id,name,salary) values (101,"Vedant",696969),(102,"Sumeet",969696),(103,"Rutuja",88888);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from employees;
++-------------+--------+--------+
+| employee_id | name   | salary |
++-------------+--------+--------+
+|         101 | Vedant | 696969 |
+|         102 | Sumeet | 969696 |
+|         103 | Rutuja |  88888 |
++-------------+--------+--------+
+3 rows in set (0.00 sec)
+
+mysql> select * from employees;
++-------------+--------+--------+
+| employee_id | name   | salary |
++-------------+--------+--------+
+|         101 | Vedant |  50000 |
+|         102 | Sumeet | 969696 |
+|         103 | Rutuja |  88888 |
++-------------+--------+--------+
+3 rows in set (0.00 sec)

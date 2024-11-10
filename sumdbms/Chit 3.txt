@@ -1,0 +1,107 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chit2              |
+| information_schema |
+| mysql              |
+| performance_schema |
+| student            |
+| sys                |
++--------------------+
+6 rows in set (0.01 sec)
+
+mysql> create database CollegeChit3;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> use CollegeChit3;
+Database changed
+
+mysql> create table dept(ins_id int , deptnm varchar(50), budget decimal (15,2));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> create table instructor(inst_id int , deptnm varchar(50), salary decimal (10,2), name varchar(100), raise decimal(5,2));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table student (stud_id int, deptnm varchar(50), sem int, name varchar(100), yr int, credits int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table teaches(inst_id int, course varchar(50), sem int, yr int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into dept(ins_id,deptnm,budget)values(1,"Computer Science",50000.00),(2,"Mathematics",40000.00),(3,"Physics",30000.00);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into instructor (inst_id,deptnm,salary,name,raise)values(1,"Computer Science",6000.00,"Sumeet",100.0),(2,"Mathematics",5500.00,"Ashish",8.0),(3,"Physics",4500.00,"Varad",5.5);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into student(stud_id, deptnm, sem, name, yr, credits)values(101,"Computer Science",2, "Kshitij",2023,38),(102,"Mathematics",3,"Rutuja",2022,40),(103,"Physics",1,"Shradha",2024,30);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into teaches(inst_id,course,sem,yr)values(1,"Data Structure",2,2023),(2,"Calculus",3,2022),(3,"Quantum Mechanics",1,2024);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select deptnm,avg(salary) as avg_salary from instructor group by deptnm;
++------------------+-------------+
+| deptnm           | avg_salary  |
++------------------+-------------+
+| Computer Science | 6000.000000 |
+| Mathematics      | 5500.000000 |
+| Physics          | 4500.000000 |
++------------------+-------------+
+3 rows in set (0.02 sec)
+
+mysql> select deptnm , avg(salary) as avg_salary from instructor group by deptnm order by avg_salary desc limit 1;
++------------------+-------------+
+| deptnm           | avg_salary  |
++------------------+-------------+
+| Computer Science | 6000.000000 |
++------------------+-------------+
+1 row in set (0.00 sec)
+
+mysql> delete from instructor where salary < 2000;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from instructor;
++---------+------------------+---------+--------+--------+
+| inst_id | deptnm           | salary  | name   | raise  |
++---------+------------------+---------+--------+--------+
+|       1 | Computer Science | 6000.00 | Sumeet | 100.00 |
+|       2 | Mathematics      | 5500.00 | Ashish |   8.00 |
+|       3 | Physics          | 4500.00 | Varad  |   5.50 |
++---------+------------------+---------+--------+--------+
+3 rows in set (0.00 sec)
+
+mysql> select * from dept;
++--------+------------------+----------+
+| ins_id | deptnm           | budget   |
++--------+------------------+----------+
+|      1 | Computer Science | 50000.00 |
+|      2 | Mathematics      | 40000.00 |
+|      3 | Physics          | 30000.00 |
++--------+------------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> select * from student;
++---------+------------------+------+---------+------+---------+
+| stud_id | deptnm           | sem  | name    | yr   | credits |
++---------+------------------+------+---------+------+---------+
+|     101 | Computer Science |    2 | Kshitij | 2023 |      38 |
+|     102 | Mathematics      |    3 | Rutuja  | 2022 |      40 |
+|     103 | Physics          |    1 | Shradha | 2024 |      30 |
++---------+------------------+------+---------+------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select * from teaches;
++---------+-------------------+------+------+
+| inst_id | course            | sem  | yr   |
++---------+-------------------+------+------+
+|       1 | Data Structure    |    2 | 2023 |
+|       2 | Calculus          |    3 | 2022 |
+|       3 | Quantum Mechanics |    1 | 2024 |
++---------+-------------------+------+------+
+3 rows in set (0.00 sec)
