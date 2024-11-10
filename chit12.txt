@@ -1,0 +1,61 @@
+// creating database
+create database trigersss;
+
+//use database
+use trigersss;
+
+
+//creating a table
+create table Library (BookID int primary key, BookTitle varchar(45) not null, BookAuthor varchar(25) not null, BookEdition int, NumberOfCopies int);
+
+//reading table columns
+desc Library;
+
+//creating table
+create table Library_Audit (BookID int not null, BookTitle varchar(45) not null, BookAuthor varchar(25) not null, BookEdition int, NumberOfCopies int, DateModified date, Operation varchar(15));
+
+//reading table
+desc Library_Audit;
+
+//using delimiter
+delimiter #
+
+create trigger LibraryUpdateTrigger
+before update on Library for each row
+begin
+declare Operation varchar(15);
+set Operation = "Updated";
+insert into Library_Audit values (old.BookID, old.BookTitle, old.BookAuthor, old.BookEdition, old.NumberOfCopies, curdate(), Operation);
+end #
+
+create trigger LibraryDeleteTrigger
+before delete on Library for each row
+begin
+declare Operation varchar(15);
+set Operation = "Deleted";
+insert into Library_Audit values (old.BookID, old.BookTitle, old.BookAuthor, old.BookEdition, old.NumberOfCopies, curdate(), Operation);
+end #
+
+//ending delimiter
+delimiter ;
+
+//displaying the table 
+select * from Library;
+select * from Library_Audit;
+
+//updating 
+update Library set BookAuthor = 'John Hopcraft' where BookTitle = 'TOC';
+
+//displaying the table
+select * from Library;
+select * from Library_Audit;
+
+//deleting the command
+delete from Library where BookTitle = 'TOC';
+
+//displaying the table
+select * from Library;
+select * from Library_Audit;
+
+//triggers work as sensors its way to automatically perform actions whenever something spesific happens to your data..
+//eg..whenever a new user is registered a welcome message is been sent through a mail this happens because of triggers....

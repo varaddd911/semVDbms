@@ -1,0 +1,59 @@
+create table departments(department_id int primary key, department_name varchar(30));
+create table students(student_id Int primary key, name varchar(30), age int not null, FOREIGN KEY(department_id) REFERENCES department(department_id));
+create table courses(course_id int primary key, course_name varchar(30), FOREIGN KEY(department_id)REFERENCES deparatments(department_id));
+create table enrollmemts(enrollment_id int primary key,FOREIGN KEY(student_id) REFERENCES students(student_id),grade char(4));
+
+//inserting records
+INSERT INTO students (student_id, name, age, department_id)
+VALUES (101, 'Alice Johnson', 20, 1);
+
+//select with a where clause
+SELECT student_id, name, age
+FROM students
+WHERE age > 21;
+
+//update with a condition
+UPDATE students
+SET age = age + 1
+WHERE student_id = 101;
+
+//delete with a condition
+DELETE FROM students
+WHERE department_id IS NULL;
+
+//select with an aggreate function
+SELECT department_id, AVG(age) AS average_age
+FROM students
+GROUP BY department_id;
+
+//select with a string function
+SELECT UPPER(name) AS name_uppercase
+FROM students;
+
+//set operator union
+SELECT course_name
+FROM courses
+UNION
+SELECT DISTINCT courses.course_name
+FROM courses
+JOIN enrollments ON courses.course_id = enrollments.course_id;
+
+//using case expression
+SELECT student_id, course_id,
+       CASE
+           WHEN grade >= 60 THEN 'Pass'
+           ELSE 'Fail'
+       END AS status
+FROM enrollments;
+
+//using date function
+SELECT student_id, course_id, enrollment_date
+FROM enrollments
+WHERE enrollment_date > DATE '2023-01-01';
+
+//using join and arithmetic operator
+
+SELECT courses.course_id, courses.course_name, AVG(enrollments.grade) AS average_grade
+FROM courses
+JOIN enrollments ON courses.course_id = enrollments.course_id
+GROUP BY courses.course_id, courses.course_name;

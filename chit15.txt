@@ -1,0 +1,50 @@
+creating tables
+-- Create departments table
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY,
+    department_name VARCHAR(100) NOT NULL
+);
+
+-- Create courses table
+CREATE TABLE courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL,
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+
+-- Create students table
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT,
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+
+//creating a view
+CREATE VIEW student_department_view AS
+SELECT students.student_id, students.name, students.age, departments.department_name
+FROM students
+JOIN departments ON students.department_id = departments.department_id;
+
+//displaying a view
+SELECT * FROM student_department_view;
+
+//creatinng an index
+CREATE INDEX idx_department_id ON courses(department_id);
+
+//creating a sequence
+CREATE SEQUENCE student_id_seq
+START WITH 1
+INCREMENT BY 1;
+
+// can use this sequence in an INSERT statement to automatically assign a student_id:
+INSERT INTO students (student_id, name, age, department_id)
+VALUES (student_id_seq.NEXTVAL, 'Alice', 22, 1);
+
+//creating a synonym
+CREATE SYNONYM dept FOR departments;
+
+//displaying synonym
+SELECT * FROM dept;

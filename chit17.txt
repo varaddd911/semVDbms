@@ -1,0 +1,38 @@
+//write a Pl/SQL procedure of student which gets the name of the student from database when the student id is pass as parameter to the procedure.
+While calling the procedure pass id as parameter.
+
+
+CREATE PROCEDURE CHI17(IN A INT, OUT RESULT VARCHAR(255))
+BEGIN
+    DECLARE v_id INT; 
+    DECLARE v_name VARCHAR(255);
+
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE cur CURSOR FOR 
+        SELECT roll, NAME FROM student1;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_id, v_name;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        IF A = v_id THEN
+            SET RESULT = v_name;
+            LEAVE read_loop;
+        END IF;
+    END LOOP;
+
+    CLOSE cur;
+END
+
+
+
+
+
+for last : CALL CHIT17(1, @result);
+SELECT @result;

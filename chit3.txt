@@ -1,0 +1,76 @@
+// CREATE table for department
+CREATE TABLE dept (
+    ins_id INT PRIMARY KEY,
+    deptnm VARCHAR(50),
+    budget DECIMAL(10, 2)
+);
+
+// CREATE table for instructor
+CREATE TABLE instructor (
+    inst_id INT PRIMARY KEY,
+    deptnm VARCHAR(50),
+    salary DECIMAL(10, 2),
+    name VARCHAR(50),
+    raise DECIMAL(5, 2)
+);
+
+//CREATE table for student
+CREATE TABLE student (
+    stud_id INT PRIMARY KEY,
+    deptnm VARCHAR(50),
+    sem INT,
+    name VARCHAR(50),
+    yr INT,
+    credits INT
+);
+
+//create table for teaches
+CREATE TABLE teaches (
+    inst_id INT,
+    course VARCHAR(50),
+    sem INT,
+    yr INT,
+    PRIMARY KEY (inst_id, course, sem, yr)
+);
+
+
+//inserting into records
+INSERT INTO dept (ins_id, deptnm, budget) VALUES
+(1, 'Computer Science', 50000),
+(2, 'Mathematics', 30000),
+(3, 'Physics', 40000);
+
+//inserting into instructor
+INSERT INTO instructor (inst_id, deptnm, salary, name, raise) VALUES
+(1, 'Computer Science', 6000, 'Alice', 5),
+(2, 'Mathematics', 5500, 'Bob', 4),
+(3, 'Physics', 3000, 'Charlie', 3),
+(4, 'Computer Science', 2000, 'David', 2);
+
+// inserting into student
+INSERT INTO student (stud_id, deptnm, sem, name, yr, credits) VALUES
+(101, 'Computer Science', 1, 'John', 2023, 30),
+(102, 'Mathematics', 2, 'Emma', 2022, 28),
+(103, 'Physics', 1, 'Liam', 2023, 25);
+
+//inserting into teaches
+INSERT INTO teaches (inst_id, course, sem, yr) VALUES
+(1, 'CS101', 1, 2023),
+(2, 'MATH201', 2, 2023),
+(3, 'PHY301', 1, 2023);
+
+//finding average salary for each department using group by clause
+SELECT deptnm, AVG(salary) AS avg_salary
+FROM instructor
+GROUP BY deptnm;
+
+//department with highest average salary
+SELECT deptnm, AVG(salary) AS avg_salary
+FROM instructor
+GROUP BY deptnm
+ORDER BY avg_salary DESC
+LIMIT 1;
+
+//delete records
+DELETE FROM instructor
+WHERE salary < 2000;

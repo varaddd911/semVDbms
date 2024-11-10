@@ -1,0 +1,50 @@
+//creating database
+CREATE database lib;
+
+//using database
+use lib;
+
+//creating table
+create table Books;
+
+//inserting
+INSERT INTO Books (book_id, title, author, genre, published_year, price)
+VALUES (101, 'The Great Gatsby', 'F. Scott Fitzgerald', 'Fiction', 1925, 12.99);
+
+//display
+SELECT * FROM Books;
+
+//specific columns
+SELECT title, author, price FROM Books;
+
+//Select Books by genre
+SELECT * FROM Books
+WHERE genre = 'Fiction';
+
+// Select Books Published After 2000
+SELECT * FROM Books
+WHERE published_year > 2000;
+
+//Update Book Price
+UPDATE Books
+SET price = 15.99
+WHERE book_id = 101;
+
+//Update Author Information
+UPDATE Books
+SET author = 'George Orwell'
+WHERE book_id = 102;
+
+//Delete Book Record
+DELETE FROM Books
+WHERE book_id = 105;
+
+//Delete Books by Genre
+DELETE FROM Books
+WHERE genre = 'Science Fiction';
+
+//Select Books with Price Greater Than Average Price
+SELECT * FROM Books
+WHERE price > (SELECT AVG(price) FROM Books);
+
+//clauses: where groupby and order are different types of clauses

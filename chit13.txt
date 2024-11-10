@@ -1,0 +1,57 @@
+//creating database
+use class
+
+//create collections
+db.createCollection('students')
+
+//inserting into collections
+db.students.insertOne({
+    "_id": 4,
+    "name": "David",
+    "age": 21,
+    "courses": ["Biology", "Chemistry"],
+    "gpa": 3.7
+});
+
+db.students.insertMany([
+    {
+        "_id": 5,
+        "name": "Emma",
+        "age": 22,
+        "courses": ["Physics", "Chemistry"],
+        "gpa": 3.8
+    },
+    {
+        "_id": 6,
+        "name": "Frank",
+        "age": 20,
+        "courses": ["Math", "Physics"],
+        "gpa": 3.5
+    }
+]);
+
+//find function
+db.students.find({
+    "courses": "Math",
+    "gpa": { "$gt": 3.7 }
+});
+
+//updation
+db.students.updateOne(
+    { "_id": 2 },
+    { "$set": { "gpa": 3.9 } }
+);
+
+//deletion
+db.students.deleteMany({
+    "gpa": { "$lt": 3.6 }
+});
+
+//aggregation
+db.students.aggregate([
+    { "$match": { "courses": "Physics" } },
+    { "$group": {
+        "_id": null,
+        "averageGPA": { "$avg": "$gpa" }
+    }}
+]);

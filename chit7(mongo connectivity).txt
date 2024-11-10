@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>mongo</groupId>
+  <artifactId>mongoc</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependency>
+    <groupId>org.mongodb</groupId>
+    <artifactId>mongodb-driver</artifactId>
+    <version>4.7.0</version>  <!-- You can use the latest version -->
+</dependency>
+</project>
+
+
+
+package mongoc;
+
+import com.mongodb.client.*;
+import org.bson.Document;
+import com.mongodb.client.model.Filters;
+import java.util.Scanner;
+
+public class StudentDatabase {
+
+    // MongoDB connection details
+    static final String HOST = "localhost";
+    static final int PORT = 27017;
+    static final String DB_NAME = "StudentDBvarad";
+    static final String COLLECTION_NAME = "Students";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        MongoClient mongoClient = MongoClients.create("mongodb://" + HOST + ":" + PORT);
+        MongoDatabase database = mongoClient.getDatabase(DB_NAME); // Connect to the database
+        MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME); // Access collection
+
+        // Menu loop
+        while (true) {
+            System.out.println("\n----- Menu -----");
+            System.out.println("1. Insert Record");
+            System.out.println("2. Read Records");
+            System.out.println("3. Update Record");
+            System.out.println("4. Delete Record");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // consume the newline character
+
+            switch (choice) {
+                case 1: // Insert record
+                    System.out.print("Enter Roll Number: ");
+                    int rollNo = scanner.nextInt();
+                    scanner.nextLine();  // consume the newline character
+                    System.out.print("Enter Name: ");
+                    String name = scanner.nextLine();
+
+                    // Create a new document for the student
+                    Document document = new Document("roll_no", rollNo)
+                            .append("name", name);
+
+                    // Insert the document into the collection
+                    collection.insertOne(document);
+                    System.out.println("Record inserted: Roll No " + rollNo + ", Name " + name);
+                    break;
+
+                case 2: // Read records
+                    System.out.println("Reading records:");
+                    for (Document doc : collection.find()) {
+                        int rNo = doc.getInteger("roll_no");
+                        String rName = doc.getString("name");
+                        System.out.println("Roll No: " + rNo + ", Name: " + rName);
+                    }
+                    break;
+
+                case 3: // Update record
+                    System.out.print("Enter Roll Number to update: ");
+                    int updateRollNo = scanner.nextInt();
+                    scanner.nextLine();  // consume the newline character
+                    System.out.print("Enter New Name: ");
+                    String newName = scanner.nextLine();
+
+                    // Update the document where roll_no matches
+                    collection.updateOne(Filters.eq("roll_no", updateRollNo), 
+                            new Document("$set", new Document("name", newName)));
+
+                    System.out.println("Record updated: Roll No " + updateRollNo + ", Name " + newName);
+                    break;
+
+                case 4: // Delete record
+                    System.out.print("Enter Roll Number to delete: ");
+                    int deleteRollNo = scanner.nextInt();
+                    scanner.nextLine();  // consume the newline character
+
+                    // Delete the document where roll_no matches
+                    collection.deleteOne(Filters.eq("roll_no", deleteRollNo));
+                    System.out.println("Record deleted: Roll No " + deleteRollNo);
+                    break;
+
+                case 5: // Exit
+                    System.out.println("Exiting...");
+                    mongoClient.close();
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+}

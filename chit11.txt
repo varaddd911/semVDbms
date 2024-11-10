@@ -1,0 +1,38 @@
+DELIMITER #
+
+CREATE PROCEDURE varad()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_name VARCHAR(255);
+    DECLARE v_total INT;
+    DECLARE cur CURSOR FOR 
+        SELECT NAME, TOTAL FROM stud_marks;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    SELECT 'WORK HOTAY' AS MESSAGE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_name, v_total;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        SELECT v_name AS NAME, v_total AS TOTAL;
+
+        IF v_total <= 1500 AND v_total >= 990 THEN
+            UPDATE result SET CLASS = 'DISTINCTION' WHERE NAME = v_name;
+        ELSEIF v_total <= 989 AND v_total >= 900 THEN
+            UPDATE result SET CLASS = 'good' WHERE NAME = v_name;
+        ELSEIF v_total <= 899 AND v_total >= 825 THEN
+            UPDATE result SET CLASS = 'average' WHERE NAME = v_name;
+        ELSEIF v_total < 825 THEN
+            UPDATE result SET CLASS = 'NOT CLEARED' WHERE NAME = v_name;
+        END IF;
+    END LOOP;
+
+    CLOSE cur;
+END#
+
+DELIMITER ;

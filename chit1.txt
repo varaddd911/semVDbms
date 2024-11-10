@@ -1,0 +1,150 @@
+package xyz;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class StudentDatabase {
+
+    // JDBC URL, username, and password for MySQL
+    static final String JDBC_URL = "jdbc:mysql://localhost:3306/";
+    static final String DB_NAME = "StudentDBvara";
+    static final String USER = "root";
+    static final String PASSWORD = "1234";
+
+    // Table name
+    static final String TABLE_NAME = "Students";
+
+    public static void main(String[] args) {
+        try (Scanner scanner = new Scanner(System.in)) {
+            Connection conn = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+            Statement stmt = conn.createStatement();
+
+            // Check if the database exists; if not, create it
+            ResultSet resultSet = stmt.executeQuery("SHOW DATABASES LIKE '" + DB_NAME + "'");
+            if (!resultSet.next()) {
+                stmt.executeUpdate("CREATE DATABASE " + DB_NAME);
+                System.out.println("Database created: " + DB_NAME);
+            }
+
+            // Close the initial connection and reconnect to the specific database
+            stmt.close();
+            conn.close();
+            conn = DriverManager.getConnection(JDBC_URL + DB_NAME, USER, PASSWORD);
+            stmt = conn.createStatement();
+
+            // Check if the table exists; if not, create it
+            resultSet = stmt.executeQuery("SHOW TABLES LIKE '" + TABLE_NAME + "'");
+            if (!resultSet.next()) {
+                String createTableSQL = "CREATE TABLE " + TABLE_NAME + " (" +
+                                        "roll_no INT PRIMARY KEY, " +
+                                        "name VARCHAR(50))";
+                stmt.executeUpdate(createTableSQL);
+                System.out.println("Table created: " + TABLE_NAME);
+            }
+
+            // Main menu
+            int choice;
+            do {
+                System.out.println("\n--- Student Database Menu ---");
+                System.out.println("1. Insert Student");
+                System.out.println("2. Read Students");
+                System.out.println("3. Update Student");
+                System.out.println("4. Delete Student");
+                System.out.println("5. Exit");
+                System.out.print("Enter your choice: ");
+                choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        insertStudent(conn, scanner);
+                        break;
+                    case 2:
+                        readStudents(conn);
+                        break;
+                    case 3:
+                        updateStudent(conn, scanner);
+                        break;
+                    case 4:
+                        deleteStudent(conn, scanner);
+                        break;
+                    case 5:
+                        System.out.println("Exiting...");
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } while (choice != 5);
+
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void insertStudent(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter roll number: ");
+        int rollNo = scanner.nextInt();
+        scanner.nextLine();  // Consume newline
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine();
+
+        String insertSQL = "INSERT INTO " + TABLE_NAME + " (roll_no, name) VALUES (?, ?)";
+        try (PreparedStatement insertStmt = conn.prepareStatement(insertSQL)) {
+            insertStmt.setInt(1, rollNo);
+            insertStmt.setString(2, name);
+            insertStmt.executeUpdate();
+            System.out.println("Record inserted: Roll No " + rollNo + ", Name " + name);
+        }
+    }
+
+    private static void readStudents(Connection conn) throws SQLException {
+        String selectSQL = "SELECT * FROM " + TABLE_NAME;
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(selectSQL)) {
+
+            System.out.println("Reading records:");
+            while (rs.next()) {
+                int rollNo = rs.getInt("roll_no");
+                String name = rs.getString("name");
+                System.out.println("Roll No: " + rollNo + ", Name: " + name);
+            }
+        }
+    }
+
+    private static void updateStudent(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter roll number to update: ");
+        int rollNo = scanner.nextInt();
+        scanner.nextLine();  // Consume newline
+        System.out.print("Enter new name: ");
+        String name = scanner.nextLine();
+
+        String updateSQL = "UPDATE " + TABLE_NAME + " SET name = ? WHERE roll_no = ?";
+        try (PreparedStatement updateStmt = conn.prepareStatement(updateSQL)) {
+            updateStmt.setString(1, name);
+            updateStmt.setInt(2, rollNo);
+            int rowsUpdated = updateStmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Record updated: Roll No " + rollNo + ", New Name " + name);
+            } else {
+                System.out.println("Roll No " + rollNo + " not found.");
+            }
+        }
+    }
+
+    private static void deleteStudent(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter roll number to delete: ");
+        int rollNo = scanner.nextInt();
+
+        String deleteSQL = "DELETE FROM " + TABLE_NAME + " WHERE roll_no = ?";
+        try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSQL)) {
+            deleteStmt.setInt(1, rollNo);
+            int rowsDeleted = deleteStmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Record deleted: Roll No " + rollNo);
+            } else {
+                System.out.println("Roll No " + rollNo + " not found.");
+            }
+        }
+    }
+}

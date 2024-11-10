@@ -1,0 +1,60 @@
+//creating database
+use university;
+
+//creating student collection
+db.createCollection('Student')
+
+//inserting documents
+db.Student.insertMany([
+  { "Fname": "John", "Mname": "A", "Lname": "Doe", "Branch": "Computer Science", "Marks": 85, "Year": 2023 },
+  { "Fname": "Emma", "Mname": "B", "Lname": "Smith", "Branch": "Mathematics", "Marks": 92, "Year": 2022 },
+  { "Fname": "Liam", "Mname": "C", "Lname": "Brown", "Branch": "Physics", "Marks": 78, "Year": 2023 }
+]);
+
+//crud operations:
+
+1.find operations
+db.Student.find();
+
+//retrieve with a condition
+db.Student.find({ "Branch": "Computer Science" });
+
+//retrieve with specific fields
+db.Student.find({}, { "Fname": 1, "Marks": 1 });
+
+2.update operations
+db.Student.updateOne(
+  { "Fname": "John" },
+  { $set: { "Marks": 90 } }
+);
+
+//update many
+db.Student.updateMany(
+  {},
+  { $inc: { "Marks": 5 } }
+);
+
+
+3.delete operations
+db.Student.deleteOne({ "Fname": "Liam" });
+
+//delete many
+db.Student.deleteMany({ "Branch": "Mathematics" });
+
+//administration commands
+1.Show Databases:
+show dbs;
+
+2.Show Collections in the Current Database:
+show collections;
+
+3.Get Database Statistics:
+db.stats();
+
+4.drop collection
+db.Student.drop();
+
+5.drop database
+db.dropDatabase();
+
+// create read update delete are the crud operations

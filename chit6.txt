@@ -1,0 +1,39 @@
+//ceating database
+use mare;
+
+//collection create
+db.createCollection('Orders')
+
+//inserting documents
+db.Orders.insertMany([{CustomerID: 'A1', Amount: 400, Status: 'P'}, {CustomerID: 'B1', Amount: 300, Status: 'D'}, {CustomerID: 'A1', Amount: 200, Status: 'F'}, {CustomerID: 'C1', Amount: 200, Status: 'F'}, {CustomerID: 'B1', Amount: 700, Status: 'P'}, {CustomerID: 'B1', Amount: 800, Status:
+ 'P'}])
+
+//reading 
+ db. Orders.find()
+
+//using mapreduce for calculating sumofamounts
+var mapper1 = function(){emit(this.CustomerID,this.Amount)} 
+var reducer1 = function(keyCustomerID, valuesAmount) {return Array.sum(valuesAmount)}
+db.Orders.mapReduce(mapper1, reducer1, {out: "SumOfAmounts"})
+
+//reading sumofamounts
+db.SumOfAmounts.find()
+
+//calculating minimum order amount 
+var mapper2 = function(){emit(this.CustomerID,this.Amount)}
+var reducer2 = function(keyCustomerID, valuesAmount) {return Math.min.apply(Math, valuesAmount)}
+db.Orders.mapReduce(mapper2, reducer2, {out: "MinimumOrderAmount"})
+
+//reading MinimumOrderAmount
+db.MinimumOrderAmount.find()
+
+//calculating maxfailedorderamount
+var mapper3 = function(){if(this.Status=='F') emit(this.CustomerID,this.Amount)}
+var reducer3 = function (keyCustomerID, valuesAmount) {return Math.max.apply(Math, valuesAmount)}
+db.Orders.mapReduce(mapper3, reducer3, { out: 'MaximumFailedOrderAmount' })
+
+//reading maxfailedorderamount
+db.MaximumFailedOrderAmount.find()
+
+//mapreduce: map is used for collection which collects different books of same author and assign a keyvaluepair
+and reduce function is used for collects all mapped collections and adds up the number..
