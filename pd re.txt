@@ -1,0 +1,50 @@
+check
+
+dmesg | grep -i usb
+lsusb
+journalctl -k | grep -i usb
+sudo tail -f /var/log/syslog | grep -i usb
+sudo udevadm monitor --subsystem-match=usb
+ls /dev/
+sudo lshw -class disk
+***risky sudo blkid
+df -h
+
+
+clear
+
+
+sudo dmesg -C
+
+
+1) sudo rm /var/log/syslog
+2) continues (sudo truncate -s 0 /var/log/syslog
+)
+
+sudo journalctl --vacuum-time=1s
+
+
+sudo journalctl --since "2024-11-11" --until "2024-11-11" --vacuum-size=1K
+
+
+sudo rm /var/log/udev
+sudo truncate -s 0 /var/log/udev
+
+
+sudo rm /var/log/messages
+sudo truncate -s 0 /var/log/messages
+
+
+
+sudo truncate -s 0 /var/log/dmesg
+
+
+sudo rm /var/log/*
+sudo truncate -s 0 /var/log/*
+
+
+
+rm -rf ~/.cache/*
+rm -rf ~/.local/share/*
+
+	

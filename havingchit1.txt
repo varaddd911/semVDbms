@@ -1,0 +1,123 @@
+package xyz;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class StudentDatabase {
+
+    static final String JDBC_URL = "jdbc:mysql://localhost:3306/";
+    static final String DB_NAME = "StudentDBvara";
+    static final String USER = "root";
+    static final String PASSWORD = "1234";
+    static final String TABLE_NAME = "Students";
+
+    public static void main(String[] args) {
+        try (Scanner scanner = new Scanner(System.in)) {
+            Connection conn = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+            Statement stmt = conn.createStatement();
+
+            if (!databaseExists(stmt)) createDatabase(stmt);
+            conn = DriverManager.getConnection(JDBC_URL + DB_NAME, USER, PASSWORD);
+            stmt = conn.createStatement();
+
+            if (!tableExists(stmt)) createTable(stmt);
+
+            int choice;
+            do {
+                System.out.println("\n1. Insert Student\n2. Read Students\n3. Update Student\n4. Delete Student\n5. Exit");
+                System.out.print("Enter choice: ");
+                choice = scanner.nextInt();
+                switch (choice) {
+                    case 1: insertStudent(conn, scanner); break;
+                    case 2: readStudents(conn, scanner); break;
+                    case 3: updateStudent(conn, scanner); break;
+                    case 4: deleteStudent(conn, scanner); break;
+                    case 5: System.out.println("Exiting..."); break;
+                    default: System.out.println("Invalid choice.");
+                }
+            } while (choice != 5);
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean databaseExists(Statement stmt) throws SQLException {
+        ResultSet resultSet = stmt.executeQuery("SHOW DATABASES LIKE '" + DB_NAME + "'");
+        return resultSet.next();
+    }
+
+    private static void createDatabase(Statement stmt) throws SQLException {
+        stmt.executeUpdate("CREATE DATABASE " + DB_NAME);
+        System.out.println("Database created: " + DB_NAME);
+    }
+
+    private static boolean tableExists(Statement stmt) throws SQLException {
+        ResultSet resultSet = stmt.executeQuery("SHOW TABLES LIKE '" + TABLE_NAME + "'");
+        return resultSet.next();
+    }
+
+    private static void createTable(Statement stmt) throws SQLException {
+        String createTableSQL = "CREATE TABLE " + TABLE_NAME + " (roll_no INT PRIMARY KEY, name VARCHAR(50))";
+        stmt.executeUpdate(createTableSQL);
+        System.out.println("Table created: " + TABLE_NAME);
+    }
+
+    private static void insertStudent(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter roll number: ");
+        int rollNo = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine();
+        String insertSQL = "INSERT INTO " + TABLE_NAME + " (roll_no, name) VALUES (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(insertSQL)) {
+            stmt.setInt(1, rollNo);
+            stmt.setString(2, name);
+            stmt.executeUpdate();
+            System.out.println("Record inserted.");
+        }
+    }
+
+    private static void readStudents(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Use HAVING clause? (yes/no): ");
+        String choice = scanner.next().toLowerCase();
+        String query = "SELECT name, COUNT(*) AS count FROM " + TABLE_NAME + " GROUP BY name";
+        if (choice.equals("yes")) {
+            System.out.print("Enter minimum count: ");
+            int minCount = scanner.nextInt();
+            query += " HAVING count >= " + minCount;
+        }
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                System.out.println("Name: " + rs.getString("name") + ", Count: " + rs.getInt("count"));
+            }
+        }
+    }
+
+    private static void updateStudent(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter roll number to update: ");
+        int rollNo = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter new name: ");
+        String name = scanner.nextLine();
+        String updateSQL = "UPDATE " + TABLE_NAME + " SET name = ? WHERE roll_no = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+            stmt.setString(1, name);
+            stmt.setInt(2, rollNo);
+            int rows = stmt.executeUpdate();
+            System.out.println(rows > 0 ? "Record updated." : "Roll No not found.");
+        }
+    }
+
+    private static void deleteStudent(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter roll number to delete: ");
+        int rollNo = scanner.nextInt();
+        String deleteSQL = "DELETE FROM " + TABLE_NAME + " WHERE roll_no = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(deleteSQL)) {
+            stmt.setInt(1, rollNo);
+            int rows = stmt.executeUpdate();
+            System.out.println(rows > 0 ? "Record deleted." : "Roll No not found.");
+        }
+    }
+}
